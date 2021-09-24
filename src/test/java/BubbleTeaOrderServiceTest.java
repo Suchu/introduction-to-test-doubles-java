@@ -17,56 +17,49 @@ import static org.mockito.Mockito.*;
 @RunWith(Parameterized.class)
 public class BubbleTeaOrderServiceTest {
 
+    private DebitCard testDebitCard;
     private PaymentDetails paymentDetails;
+    private DummySimpleLogger dummySimpleLogger;
     private BubbleTeaMessenger mockMessenger;
     private BubbleTeaOrderService bubbleTeaOrderService;
-    private final String name;
-    private final String address;
-    private final String debitCard;
-    private final BubbleTeaTypeEnum bubbleTeaType;
 
-    public BubbleTeaOrderServiceTest(String name,
-                                     String address,
-                                     String debitCard,
-                                     BubbleTeaTypeEnum bubbleTeaType) {
-        this.name = name;
-        this.address = address;
-        this.debitCard = debitCard;
-        this.bubbleTeaType = bubbleTeaType;
+    @Parameterized.Parameter()
+    public String bubbleTeaType;
+    @Parameterized.Parameter(1)
+    public double teaPrice;
+
+    @Parameterized.Parameters(name = "{index}: bubbleTeaType = {0}, teaPrice = {1}")
+    public static Collection<Object[]> data() {
+        return Arrays.asList(new Object[][]{
+                {"MatchaMilkTea", 4.20},
+                {"PeachIceTea", 2.80},
+                {"LycheeIceTea", 3.50},
+                {"JasmineMilkTea", 3.15},
+                {"OolongMilkTea", 2.50},
+        });
     }
 
     @BeforeEach
     public void setup() {
-        DebitCard testDebitCard = new DebitCard(debitCard);
-        paymentDetails = new PaymentDetails(name, address, testDebitCard);
+        DebitCard testDebitCard = new DebitCard("0123456789");
+        paymentDetails = new PaymentDetails("hello kitty", "sanrio puroland", testDebitCard);
         DummySimpleLogger dummySimpleLogger = new DummySimpleLogger();
         mockMessenger = mock(BubbleTeaMessenger.class);
         bubbleTeaOrderService = new BubbleTeaOrderService(dummySimpleLogger, mockMessenger);
-    }
-
-    @Parameterized.Parameters
-    public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][]{
-                {"hello kitty", "sanrio puroland", "0123456789", BubbleTeaTypeEnum.MatchaMilkTea},
-                {"hello kitty1", "sanrio puroland1", "0173456786", BubbleTeaTypeEnum.PeachIceTea},
-                {"hello kitty2", "sanrio puroland2", "0183456784", BubbleTeaTypeEnum.LycheeIceTea},
-                {"hello kitty3", "sanrio puroland3", "0133456781", BubbleTeaTypeEnum.JasmineMilkTea},
-                {"hello kitty4", "sanrio puroland4", "0143456785", BubbleTeaTypeEnum.OolongMilkTea},
-        });
     }
 
     @Test
     public void shouldCreateBubbleTeaOrderRequestWhenCreateOrderRequestIsCalled() {
 
         //Arrange
-        BubbleTea bubbleTea = new BubbleTea(BubbleTeaTypeEnum.OolongMilkTea, 4.5);
+        BubbleTea bubbleTea = new BubbleTea(BubbleTeaTypeEnum.valueOf(bubbleTeaType), teaPrice);
         BubbleTeaRequest bubbleTeaRequest = new BubbleTeaRequest(paymentDetails, bubbleTea);
 
         BubbleTeaOrderRequest expectedResult = new BubbleTeaOrderRequest(
-                name,
-                address,
-                debitCard,
-                bubbleTeaType
+                "hello kitty",
+                "sanrio puroland",
+                "0123456789",
+                BubbleTeaTypeEnum.valueOf(bubbleTeaType)
         );
 
         //Act
