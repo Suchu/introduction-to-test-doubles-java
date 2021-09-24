@@ -31,11 +31,11 @@ public class BubbleTeaOrderServiceTest {
     @Parameterized.Parameters(name = "{index}: bubbleTeaType = {0}, teaPrice = {1}")
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]{
-                {"MatchaMilkTea", 4.20},
-                {"PeachIceTea", 2.80},
-                {"LycheeIceTea", 3.50},
-                {"JasmineMilkTea", 3.15},
-                {"OolongMilkTea", 2.50},
+                {"MatchaMilkTea", 6.78},
+                {"PeachIceTea", 4.20},
+                {"LycheeIceTea", 4.50},
+                {"JasmineMilkTea", 5.15},
+                {"OolongMilkTea", 4.50},
         });
     }
 
@@ -53,6 +53,7 @@ public class BubbleTeaOrderServiceTest {
 
         //Arrange
         BubbleTea bubbleTea = new BubbleTea(BubbleTeaTypeEnum.valueOf(bubbleTeaType), teaPrice);
+        System.out.println(bubbleTeaType + teaPrice);
         BubbleTeaRequest bubbleTeaRequest = new BubbleTeaRequest(paymentDetails, bubbleTea);
 
         BubbleTeaOrderRequest expectedResult = new BubbleTeaOrderRequest(
